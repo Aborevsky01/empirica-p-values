@@ -1,0 +1,163 @@
+\documentclass{article}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{siunitx}
+\usepackage{geometry}
+\usepackage{adjustbox}
+\geometry{a4paper, margin=0.75in}
+\usepackage{url}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{multirow} % Allow multirow entries in tables.
+\usepackage[sort&compress,super]{natbib}
+\usepackage{multirow}
+\usepackage{booktabs}
+
+\newcommand{\response}[1]{\vspace*{1ex} \color{blue} \noindent #1 \color{black}
+\vspace*{2ex}}
+
+\newcommand{\edit}[1]{\begin{quotation}\color{red}\noindent #1
+\color{black}\end{quotation}}
+
+\newcommand{\myinput}[1]{\color{red}\input{#1}\color{black}}
+
+\newcommand{\fixme}[1]{{\color{red} FIXME: #1 }}
+
+% Make a code block.
+\newcommand{\codeblock}[1]{{\small \color{cyan}\begin{verbatim}{{#1}}\end{verbatim}}}
+
+\begin{document}
+
+\noindent
+\today\\[2ex]
+
+\noindent
+Manuscript: PONE-D-26-04885R1\\
+``Toward reliable false discovery rate control in classification problems under distribution shift''\\[2ex]
+
+\noindent
+Dear Dr.\ Yamamoto:\\[2ex]
+
+We thank you and the two reviewers for the further careful evaluation of our revised manuscript.
+
+\
+
+\fixme{Short opening paragraph summarizing the round: Reviewer 2 recommends acceptance; Reviewer 3 (new in this round) raises three methodological/statistical points. State that we address each below, and list what was changed in the manuscript (to be filled in once the reviewer responses are finalized).}
+
+\
+
+In what follows, the editor's and reviewers' comments are shown in black type, interleaved with our responses (in blue) and, where appropriate, the modified or added text (in red).
+
+\
+
+Thank you very much for your consideration.\\[2ex]
+
+\noindent
+Best regards,\\[2ex]
+
+\noindent
+Prof. Attila Kertesz-Farkas\\
+HSE University
+
+\clearpage
+\section*{Academic Editor -- Journal Requirements}
+
+1. If the reviewer comments include a recommendation to cite specific previously published works, please review and evaluate these publications to determine whether they are relevant and should be cited. There is no requirement to cite these works unless the editor has indicated otherwise.
+
+\response{Neither Reviewer 2 nor Reviewer 3 recommended specific previously published works to cite, so no changes were necessary on this point.}
+
+\clearpage
+\section*{Reviewer \#2}
+
+The authors have addressed all the concerns I raised regarding the previous version. Therefore, I recommend accepting this manuscript as it is.
+
+\response{We thank the reviewer for the careful re-evaluation of our manuscript and for the positive recommendation.}
+
+\clearpage
+\section*{Reviewer \#3}
+
+\response{We thank the reviewer for the careful and critical reading of our manuscript, and for raising these methodological and statistical concerns. We have split the reviewer's comments into three points and address each of them individually below.}
+
+1. What is the statistical rationale for assuming that the distributional shift only affects the null component and not the signal component (positive scores)? If a batch effect or a shift in scale occurs, it typically affects the entire distribution. The authors must provide a theoretical proof or a robust simulation-based argument showing why this asymmetric approach does not introduce bias into the detection of true positives.
+
+\response{This comment definitaly leads to an interesting discussion; it touches on a few related aspects of TNA, so we address it below from several angles.
+
+\ 
+
+(A) If the reviewer is concerned about positive signal detection under data shift in general then our response is as follows:
+
+ We agree that a batch effect affects the entire data. The theoretical guarantee of the Benjamini--Hochberg procedure (and of the underlying p-value machinery in general \cite{Benjamini1995Controlling,storey2004strong}) depends only on the p-values of the {\em truly null} instances being (super-)uniformly distributed; no analogous requirement is placed on the p-values of the truly non-null (positive, signal, alternative hypothesis) instances. 
+
+However, we note that, we do not have any guarantees on the statistical power. Depending on the shift, it can result in either decreased power (if the test non-null scores move closer to the training null $X_0$, yielding larger p-values for the true positives) or increased power (if the test non-null scores move further away from $X_0$, yielding smaller p-values for the true positives).
+
+In the manuscript, in the TNA protocol, and in our experimental validation, we do not claim that the prediction accuracy remains the same (as in the training dataset); and we do not claim that we can fix wrong predictions for samples which were misclassified due to data shift. Our aim is to make the FDR control at the desired level less biased under data shift.
+
+\ 
+
+(B) If the reviewer is concerned about the distributional assumptions of TNA then we would like to point the reviewer to the ``TNA protocol'' section of the manuscript, which already states precisely what TNA- and TNA+ assume, we quote it below:
+
+\begin{quotation}\noindent 
+``The first variation, called TNA- (TNA minus), relies on the assumption that the shapes of the training null ($X_0$) and test null ($T_0$) distributions are `similar', but there is no assumption on the form of the non-null distributions. The second variation, called TNA+ (TNA plus), relies on that the shapes of the training non-null ($X_1$) and test non-null ($T_1$) distributions are `similar', but there is no assumption on the analytical form of the null distributions. By `similar' distributions we mean that they are close in a statistical sense, such as having a small Wasserstein distance or Jensen-Shannon divergence; intuitively, their histograms can be aligned without major reshaping. TNA's performance is robust to minor distributional shifts in practice, but it degrades gracefully as this distance increases. The proportion of the nulls may freely vary between the training and test data in the case of both TNA methods, there is no assumption on this.''
+\end{quotation}
+
+That is: TNA places its similarity assumption on only one component (null for TNA-, non-null for TNA+), leaving the other component's shift unconstrained, and the manuscript states that TNA degrades as the similarity decreases between training and test. The user can pick TNA- or TNA+ depending on whether the null or non-null component is expected to be more stable (respectively).
+
+\ 
+
+(C) We note that, we already have simulation-based evidence, in the manuscript, of TNA behaving well under a shift that plausibly affects the entire score distribution rather than the null alone: in Example 2 (MNIST with a 10\% reduction of pixel intensity applied to every test image), the perturbation acts on all test images regardless of their true label, so both the null and non-null test scores are affected; TNA nonetheless recovers accurate FDR control (Fig~3(i)).
+
+
+\ 
+
+(D) If the reviewer is concerned about theoretical guarantees, we note that we already discussed this with another reviewer in the first round; we summarize that response below for completeness (see our previous Response to Reviewers, Reviewer 2, point 1, for the full discussion):
+\begin{quotation}\noindent
+TNA is presented as a practical heuristic, not as a method with proven error bounds. We state in the manuscript that our method does not provide any theoretical guarantee that the FDR control with TNA EPVs becomes accurate, or conservatively or liberally biased, without additional assumptions; hence TNA is heuristic in its general form. To our knowledge, no existing method for FDR control under unconstrained, general distribution shift currently offers such guarantees either; we therefore frame TNA as a practically useful, model-agnostic alternative rather than as a theoretically certified procedure. More fundamentally, most FDR-controlling procedures (e.g., BH) only carry their theoretical guarantee under the assumption that the input p-values are valid, i.e., uniformly distributed under the null; in practice, this validity typically relies on an assumed parametric null (most commonly a standard normal distribution) that rarely holds exactly for real data, so FDR control breaks down not because the procedure itself is flawed, but because its premise is violated. TNA targets exactly this gap by estimating the null empirically from the training data instead of assuming a parametric form; the price of dropping that assumption is that we can only offer a heuristic argument rather than a formal guarantee, a trade-off already reflected in the manuscript's title, ``toward reliable FDR control'' rather than ``guaranteed FDR control''.
+\end{quotation}
+
+\ 
+
+(E) If the reviewer referred to something else then we kindly ask him/her to elaborate or point to the relevant paragraph/sentence of the manuscript. 
+}
+
+
+%First, TNA's estimate of the test null, $\hat{T}_0$, is not built in isolation from the non-null part of the data. Steps 1--3 of the algorithm (TNA- and TNA+ alike) derive $\hat{T}_0$ from the histogram of the {\em entire} observed test score set $\overline{T}_s$, which is a mixture of both null and non-null test instances. %Consequently, if a batch effect or scale shift moves the whole test score distribution, this is reflected in $\overline{T}_s$ and therefore in $\hat{T}_0$ as well; the non-null part of the shift is not ignored at this stage. Moreover, TNA+ is precisely the complementary variant for the case in which the non-null (positive) distribution, rather than the null, is assumed to be the more stable one between training and test; we offer both variants because we agree with the reviewer that, a priori, either the null or the non-null component could be the one that shifts less.
+
+%Second, the only place where the correction is applied asymmetrically is the final affine adjustment (Step 5), which recenters/rescales only the sub-threshold scores ($t_s<0$) and leaves the scores that already resolve as clear positive predictions untouched. This is not an assumption about where the physical shift occurs; rather, it follows directly from the statistical requirement for valid FDR control. The theoretical guarantee of the Benjamini--Hochberg procedure (and of the underlying p-value machinery in general \cite{Benjamini1995Controlling,storey2004strong}) depends only on the p-values of the {\em truly null} instances being (super-)uniformly distributed; no analogous requirement is placed on the p-values of the truly non-null instances, which need only be small (i.e., non-uniform) to yield power. In other words, the asymmetry in TNA's correction mirrors an asymmetry that already exists in FDR theory itself, rather than introducing a new, unjustified one. However, we note that we do not have any guarantees on the statistical power. Depending on  the shift it can results in either decreased (if null and non-null converge) or increased (if null and non-null diverge) power. 
+
+% Because of this, adjusting only the region of the score axis that determines calibration validity does not bias the detection of true positives: the ranking of the confidently positive scores is preserved exactly, and their (already small) p-values only get smaller or stay the same as we do not modify them.
+
+%Third, we already have simulation-based evidence, in the manuscript, of TNA behaving well under a shift that plausibly affects the entire score distribution rather than the null alone: in Example 2 (MNIST with a 10\% reduction of pixel intensity applied to every test image), the perturbation acts on all test images regardless of their true label, so both the null and non-null test scores are affected; TNA nonetheless recovers accurate FDR control (Fig~\ref{fig:mnist_shfit}(i)).
+
+%Fourth, we would also like to point the reviewer to the ``TNA protocol'' section of the manuscript, which already states precisely what TNA- and TNA+ assume, and it is not that the shift is confined to the null:
+
+%\begin{quotation}\noindent
+% ``The first variation, called TNA- (TNA minus), relies on the assumption that the shapes of the training null ($X_0$) and test null ($T_0$) distributions are `similar', but there is no assumption on the form of the non-null distributions. The second variation, called TNA+ (TNA plus), relies on that the shapes of the training non-null ($X_1$) and test non-null ($T_1$) distributions are `similar', but there is no assumption on the analytical form of the null distributions. By `similar' distributions we mean that they are close in a statistical sense, such as having a small Wasserstein distance or Jensen-Shannon divergence; intuitively, their histograms can be aligned without major reshaping. TNA's performance is robust to minor distributional shifts in practice, but it degrades gracefully as this distance increases. The proportion of the nulls may freely vary between the training and test data in the case of both TNA methods, there is no assumption on this.''
+% \end{quotation}
+
+% \noindent That is: (i) each variant places its similarity assumption on only one component (null for TNA-, non-null for TNA+), leaving the other component's shift {\em completely unconstrained}, so neither variant assumes the shift spares the non-null in general -- the user simply picks whichever component is expected, on domain grounds, to be the more stable one between training and test; and (ii) the manuscript already states that TNA degrades {\em gracefully}, rather than catastrophically, as the true distance between training and test grows, which is the qualitative form a ``robustness argument'' takes for a heuristic, assumption-light method such as ours, in place of a distribution-free formal bound. We have added a short clarifying passage to the ``TNA protocol'' section and a cross-reference to Example 2, quoted below, to tie this existing statement of assumptions explicitly to the reviewer's concern about whole-distribution shifts.}
+
+% \edit{We emphasize that restricting the corrective adjustment in Step 5 to the sub-threshold scores ($t_s<0$) is not an assumption that the underlying data shift is confined to the null component. The estimate $\hat{T}_0$ used to build the correction (Steps 1--3) is derived from the histogram of the entire observed test score set $\overline{T}_s$, which mixes both null and non-null test instances, so a shift acting on the whole distribution is already reflected in $\hat{T}_0$; TNA+ further covers the complementary case in which the non-null distribution, rather than the null, is assumed to be the more stable one across training and test. The reason the final correction is applied only to the sub-threshold scores is that the theoretical validity of BH-type FDR control depends solely on the p-values of the truly null instances being (super-)uniformly distributed \cite{Benjamini1995Controlling,storey2004strong}; no such requirement exists for the p-values of the truly non-null instances, which are only required to be small. Adjusting the null-side scores therefore targets exactly the region that determines the validity of FDR control, while leaving the ranking of confidently positive scores, and hence the detection of true positives, unaffected. Example 2, where the intensity of every test image (irrespective of its true label) is reduced, illustrates this point empirically: even though the perturbation acts on the entire score distribution rather than on the null alone, TNA continues to yield accurate FDR control.}
+
+2. Conceptual Ambiguity Regarding FDR Control: The manuscript exhibits a fundamental confusion between FDR control in the context of `Feature Selection' (multiple testing across features) and `Sample-level Inference' (calibrating significance for a single test). The authors fail to clarify whether the primary objective of TNA is to improve feature selection stability or to ensure the validity of p-values for individual samples. This conflation undermines the statistical interpretability of the results. The authors must explicitly state the scope of their FDR control and demonstrate how the TNA method accounts for the multiplicity of tests if applied to feature selection, or conversely, justify why a sample-level adjustment is sufficient for high-dimensional feature discovery.
+
+\response{We thank the reviewer for asking us to clarify this, and we would like to state plainly: we do not perform, nor do we make any claim about, feature selection anywhere in this manuscript. TNA and the FDR control built on top of it operate entirely at the level of test {\em instances} (samples), not at the level of features.
+%Concretely, the object that TNA calibrates is a single, already-computed scalar discriminative score $f(t)$ per test instance $t$ -- the output of a trained classifier (a CNN, DenseNet121, Cellpose, etc.), not a feature. The multiple-testing problem we address is the classical one of testing $m$ hypotheses simultaneously, one for each test instance in $T_s=\{t_1,\dots,t_m\}$, where the null hypothesis for instance $t_i$ is ``$t_i$ belongs to the negative class''. The Benjamini--Hochberg procedure is applied across these $m$ per-instance p-values (the EPVs, or the TNA EPVs) to bound the proportion of false discoveries among the instances declared positive. This is multiple testing across samples, in exactly the same formal sense as, e.g., testing many genes or many decoy-scored peptide-spectrum matches is multiple testing across features/candidates in genomics or proteomics; the only difference is what is being enumerated over ($m$ test instances here, versus $m$ candidate features there). TNA does not touch, reduce, or select among the input features used by the classifier $f$ at any point; it never sees the feature space at all, only the one-dimensional score output.
+We agree that the manuscript should state this scope explicitly rather than leave it to be inferred. %, since the term ``feature'' is also used loosely elsewhere in the literature (e.g., ``feature selection'' via FDR control over gene expression features). 
+
+We add the clarifying sentences below to the Preliminaries section, immediately after $T_s$ is defined, to remove any ambiguity about the scope of our FDR control.
+
+%For the BCSS experiment specifically, the multiplicity is likewise at the instance level: each pixel, tested once per class in a one-vs-rest fashion, contributes one p-value per (pixel, class) pair, and BH is applied across the concatenated set of all such pairs (as already described in the BCSS subsection). This is a multi-label extension of the same sample-level scope, not a shift toward feature-selection multiplicity.
+
+}
+
+\edit{We emphasize that the multiplicity being controlled throughout this paper is across test {\em instances}, not across candidate features. TNA calibrates a single, already-computed scalar discriminative score $f(t)$ per test instance $t\in T$; it does not operate on, select among, or make any claim about the input features consumed by the classifier $f$. The BH procedure is applied to the $m$ per-instance p-values obtained from the score set $T_s=\{f(t):t\in T\}$, where the null hypothesis associated with each instance $t$ is ``$t$ belongs to the negative class''; this is the classical multiple-testing setting in which the enumeration is over test instances rather than over candidate features. In the multi-label BCSS experiment, this scope extends naturally to (pixel, class) pairs (Results, BCSS subsection), but the unit of multiplicity remains the instance (pixel) classification, not the feature.}
+
+3. While the manuscript introduces TNA to manage FDR under distributional mismatch, the results currently lack sufficient statistical rigor. To address this, the authors should employ bootstrapping procedures on both the training and test sets to generate and report confidence intervals for all performance metrics.
+
+\response{\fixme{Response and new experiment pending -- requires re-running the pipeline with bootstrap resampling to produce confidence intervals for all reported metrics (Q-Q uniformity, number of trusted predictions, FDP deviation) across datasets. Not yet drafted per instruction.}}
+
+\bibliographystyle{plos2025.bst}
+\bibliography{bibliography}
+
+\end{document}
