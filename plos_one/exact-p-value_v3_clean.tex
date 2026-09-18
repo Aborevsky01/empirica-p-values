@@ -169,8 +169,8 @@
 
 \newcommand{\lorem}{\textbf{LOREM}}
 \newcommand{\ipsum}{\textbf{IPSUM}}
-% \newcommand{\edit}[1]{\color{red}#1\color{black}}   % use this for track changes
-\newcommand{\edit}[1]{#1} % use this for clean version 
+\newcommand{\edit}[1]{\color{red}#1\color{black}}   % use this for track changes
+% \newcommand{\edit}[1]{#1} % use this for clean version 
 
 %% END MACROS SECTION
 
@@ -274,7 +274,8 @@ Implicitly or explicitly, but knowing or estimating the null distribution is ess
 In certain practical applications it is possible to label some of the data as negative with high confidence.
 For instance, decoy peptides \cite{elias2007target} in tandem mass spectrometry and internal negative control proteins \cite{gao2023simultaneous} in proteomic profiling serve this purpose.
 However, this is not the case with general machine learning applications, and we propose to approximate the test null distribution $T_0$ with the empirical training null $X_0 = \{x_1, x_2, \dots, x_n\}$, where all $x_i$s prediction scores belong to the negative training class; that is, $T_0 \approx X_0 $.
-  
+
+ 
 Therefore, an {\em empirical p-value} (EPV) of a given discriminative score $t$ could be defined as the fraction of the scores of the negative training data that are greater than or equal to $t$, formally $p_t=(1+\sum_{x_i\in X_0} \mathone\{x_i \ge t\})/(n+1) \label{eq:epv}$ [eq. \ref{eq:epv}].
 This empirical p-value is also referred to as conformal p-value \cite{bates2023testing} or as rank among negative controls (RANC) \cite{gao2023simultaneous}.
 The EPVs of the negative test samples are super uniform under the null if the data distribution of the test and training samples are identically and independently distributed.
@@ -312,6 +313,10 @@ The test null adjusted empirical p-values (TNA EPVs) can then be used by the use
 Valid p-values should be uniformly distributed over the range of $[0,1]$.
 We propose to visually monitor the uniformity of the p-values with Q-Q plots, in which the p-values are plotted against their ordered normalized positions.
 Any deviation from the diagonal line of the Q-Q plot would indicate a data shift.
+
+\edit{We emphasize that the multiplicity addressed throughout this paper is across the $m$ test instances $t_1,\dots,t_m$, each associated with its own null hypothesis (``instance $t_i$ belongs to the negative class''); it is not a feature-selection problem, in which the multiplicity would instead be across a set of candidate features or variables. Each score $t_i$ is a single, already-computed scalar value produced by a machine learning classifier for one test instance, not a property of an input feature, and the classifier's input features play no further role once this score is obtained.}
+
+
 
 The TNA method operates solely at the space of prediction score, which is typically one dimensional for each class.
 Therefore, TNA is not hindered by the curse-of-dimensionality \cite{donoho2000high}.
@@ -353,6 +358,8 @@ The false discovery proportion (FDP) in a set of samples $K=\{t\in D\}$ at a sco
 \noindent where $|.|$ denotes set cardinality.
 We reserve FDR for the statistical expectation of FDP.
 FDR control methods aim to calibrate the threshold  $s_t$ so that the error rate among trusted predictions is at most level of $\alpha$. 
+
+We emphasize that the multiplicity being controlled throughout this paper is across test {\em instances}, not across candidate features. TNA calibrates a single, already-computed scalar discriminative score $f(t)$ per test instance $t\in T$; it does not operate on, select among, or make any claim about the input features consumed by the classifier $f$. The BH procedure is applied to the $m$ per-instance p-values obtained from the score set $T_s=\{f(t):t\in T\}$, where the null hypothesis associated with each instance $t$ is ``$t$ belongs to the negative class''; this is the classical multiple-testing setting in which the enumeration is over test instances rather than over candidate features. In the multi-label BCSS experiment, this scope extends naturally to (pixel, class) pairs (Results, BCSS subsection), but the unit of multiplicity remains the instance (pixel) classification, not the feature.
 
 The empirical  p-values (EPVs) of the test samples are calculated using eq. \ref{eq:epv} with respect to $X_0$.
 The p-value calculation can be time consuming for large $X_0$ sets, in this case, a binned, empirical cumulative distribution function of $X_0$ could be used to calculate the p-values accordingly in an accelerated way.
@@ -432,8 +439,9 @@ The two approaches differ only at the 3rd step of the following algorithm.
 		
 	\item [4.] Let $\mu_{X_0}$, $\sigma_{X_0}$, $\mu_{\hat{T_0}}$, and $\sigma_{\hat{T_0}}$ are the mean and std of the $X_0$ and the $\hat{T_0}$ distributions, respectively. 
 	
-	\item [5.] Adjust the test scores \edit{as follows:
-	$$\hat{t_s} = \begin{cases} (t_s-\mu_{\hat{T_0}})/\sigma_{\hat{T_0}} \cdot \sigma_{\hat{X_0}} + \mu_{X_0} & \text{if } t_s < 0 \\ t_s & \text{otherwise} \end{cases}$$}
+	\item [5.] Adjust all test scores \edit{$t_s\in T_s$ as follows:
+	$$\hat{t_s} = (t_s-\mu_{\hat{T_0}})/\sigma_{\hat{T_0}} \cdot \sigma_{X_0} + \mu_{X_0}.$$
+	}
 \end{enumerate}
 
 	Finally, calculate the TNA EPVs for each adjusted $\hat{t_s}$ test score with respect to the empirical training null ($X_0$) with using Eq. [1].
@@ -527,6 +535,8 @@ TissueNet & TissueNet Cell Segmentation Dataset & DOI: \href{https://doi.org/10.
 
 \edit{The implementation code used to produce the results reported in this manuscript is publicly available at \url{https://github.com/Aborevsky01/TNA}.}
 
+\edit{We qualified the stability of the methods with bootstrap analysis. For each dataset, we resampled both the training and the test sets $100$ times with replacement, and recomputed the standard EPV, the TNA, and the LTT methods on each resampled set. The resulting variation is indicated on the plots as a band width around each curve. Datasets with a large number of samples, such as TissueNet, and BCSS, show a very small, hardly visible bandwidth on the curves below, reflecting the low sampling variability that comes with a large sample size. The PCam and CheXpert datasets have fewer samples, and consequently shows a visibly wider bandwidth resulting from this variation.}
+
 \subsection*{PCam: tumor classification}
 
 
@@ -541,10 +551,9 @@ We evaluated the uniformity of the p-values of the test samples and the performa
 The results are shown in the first row of Fig \ref{fig:I}.
 The Q-Q plots (Fig. \ref{fig:I}-(i)-A) of the test EPVs (red dots) indicate that the test p-values are slightly biased, possibly indicating a slight overfitting and/or distribution shift between the training and test datasets.
 However, the Q-Q plots of the test  EPVs adjusted with TNA- (green dots) and TNA+ (purple dots) show a more uniformly distributed p-values.
-The plots on Fig. \ref{fig:I}-(i)-BCD indicate that all four FDR control methods are mostly accurate with this dataset especially at critical $\alpha$ levels (0-0.1), despite the small bias in the EPVs.
-The TNA methods (both, TNA- and TNA+) manage to reduce the bias from EPVs and yield more accurate FDR control with BH (green and purple lines), than the BH method with the original EPVs (red line).
-However, LTT outperformed both BH-based methods in this benchmark. 
-
+\edit{The plots on Fig. \ref{fig:I}-(i)-BCD indicate that the LTT and standard EPV methods yields mostly accurate FDR control with this dataset especially at critical $\alpha$ levels (0-0.1).
+The TNA methods (both TNA- and TNA+) yield p-values closer to uniform (Fig. \ref{fig:I}-(i)-A), yet they result in conservative FDR control due to poor $\hat{\pi}_0$ estimation: the true $\pi_0=0.5$, while the Storey method estimated $\hat{\pi}_0=0.58$ for the standard EPVs, but $\hat{\pi}_0=0.65$ for both TNA- and TNA+.
+}
 
 \begin{figure}[h!]
 	\centering
@@ -563,6 +572,8 @@ We manually resampled the test data so that  the positive and negative class bal
 The evaluation plots are shown in the second row of Fig \ref{fig:I}.
 The Q-Q plot (Fig. \ref{fig:I}-(ii)-A) reveals that the EPVs (red dots) become slightly biased; however, our TNA methods manage to reduce this bias from the EPVs (green dots).
 The LTT method became liberal in FDR control, the BH protocol with standard EPVs resulted in conservative FDR control; whereas, the BH with the TNA EPVs remained accurate, especially at critical range of q-values (0-0.1) (Fig. \ref{fig:I}-(ii)-C).
+
+\edit{The bootstrap analysis shows moderately little variation for the PCam dataset, reflecting its relatively large sample size.}
 
 
 
@@ -592,7 +603,7 @@ The LTT method became liberal in FDR control, the BH protocol with standard EPVs
 		% \includegraphics[width=0.225\linewidth, height=0.225\linewidth]{img/cnn_FDPscat_chx_balanced.pdf}\\
 		A & B & C & D
 	\end{tabular}
-	\caption{{\bf Performance evaluation of FDR controlling methods.} See the caption of Fig \ref{fig:mnist_shfit} for plot descriptions. }
+	\caption{{\bf Performance evaluation of FDR controlling methods.} See the caption of Fig \ref{fig:mnist_shfit} for plot descriptions. \edit{The bandwidth around the black ground truth line indicating the variation from bootstrapping is indicated with a gray dotted.}}
 	\label{fig:I}
 \end{figure} 
 
@@ -614,7 +625,7 @@ The proportion of the positive class became 27 \% and 23 \% in the training and 
 The DenseNet121 model achieved accuracies of 89 \% and 84 \% on the training and test sets, respectively.
 
 We evaluated the four FDR controlling methods and plotted the results on Fig \ref{fig:I}-(iii).
-Interestingly, the most confident prediction of the DenseNet121 model in the test set is wrong.
+Interestingly, the most confident predictions of the DenseNet121 model in the test set are wrong.
 This can be seen by the flat region of the ground truth evaluation (black line) at low q-values around 0-0.05 (Fig, \ref{fig:I}-(iii)-C).
 Fortunately, all four FDR controlling methods under investigations managed to capture this and remain close to the ground truth (Fig, \ref{fig:I}-(iii)-B-D).
 The standard EPVs (red dots) tend to be off at the critical range (p-value $<$ 0.1), but this does not affect the FDR controlling results in this benchmark, perhaps because of the confident incorrect predictions.
@@ -631,7 +642,9 @@ Taking this into account, we re-sampled the test set in the CheXpert dataset to 
 The results of the re-evaluation are shown in Fig \ref{fig:I}-(iv).
 The LTT and the TNA- EPVs are both slightly biased.
 The BH with the standard EVPs and with TNA+ EPVs achieve the most accurate FDR control over the entire range of $\alpha$ levels (0-1) in general.
-The LTT method is very sensitive to class distribution shift demonstrated by this case, wheree it resulted in a liberally biased FDR control.
+The LTT method is very sensitive to class distribution shift demonstrated by this case, and it resulted in a liberally biased FDR control.
+
+\edit{The CheXpert dataset has the smallest test set, and accordingly it shows the highest variability, both in the ground truth and in the estimated curves, as indicated by the bootstrap band widths on the figures.}
 
 
 
