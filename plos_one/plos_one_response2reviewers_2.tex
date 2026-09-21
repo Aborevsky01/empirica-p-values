@@ -43,7 +43,13 @@ We thank you and the two reviewers for the further careful evaluation of our rev
 
 \
 
-\fixme{Short opening paragraph summarizing the round: Reviewer 2 recommends acceptance; Reviewer 3 (new in this round) raises three methodological/statistical points. State that we address each below, and list what was changed in the manuscript (to be filled in once the reviewer responses are finalized).}
+Reviewer 2 recommends accepting the manuscript as it is. Reviewer 3 raised three methodological and statistical points, which we address in detail below. In brief:
+
+\begin{enumerate}
+\item {\em Asymmetric treatment of null and signal scores.} This comment led us to discover an implementation error, introduced during the previous revision through a miscommunication within our team (Step 5 of the TNA algorithm). We have restored the intended behavior, fixed the bug, and re-run all experiments to make sure that our results are reproducible and not error sneaked in the experimental results. The conclusions are unchanged, and the corrected figures are hardly distinguishable from the previous ones.
+\item {\em Scope of FDR control.} We clarify, in the Introduction, that the multiple testing addressed in this work is over test instances (samples) and not a feature-selection problem, and we explain how the pixel-level classification tasks fit into this framing.
+\item {\em Statistical rigor.} We carried out the requested bootstrap analysis, resampling both the training and test sets, and now show the resulting variability as bands around the curves in the figures. The variability is small overall, and decreases as expected with increasing dataset size.
+\end{enumerate}
 
 \
 

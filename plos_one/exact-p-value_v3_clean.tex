@@ -169,8 +169,8 @@
 
 \newcommand{\lorem}{\textbf{LOREM}}
 \newcommand{\ipsum}{\textbf{IPSUM}}
-\newcommand{\edit}[1]{\color{red}#1\color{black}}   % use this for track changes
-% \newcommand{\edit}[1]{#1} % use this for clean version 
+% \newcommand{\edit}[1]{\color{red}#1\color{black}}   % use this for track changes
+\newcommand{\edit}[1]{#1} % use this for clean version 
 
 %% END MACROS SECTION
 
@@ -708,9 +708,9 @@ This is essentially a multi-label classification scenario.
 %Our conclusion with this benchmark datasets is that the deviations in QQ plots and sharp turns in the plot of trusted predictions (without the ground truth) should be alarming to researchers about the performance of their models. 
 
 The evaluation of the FDR controlling methods is shown in Fig \ref{fig:ii}-(iii).
-At first glance, the results suggest that LTT manages to control FDR well but this datasets is challenging for BH with standard or TNA EPVs.
-The Q-Q plots of the EPVs and the TNA EPVs are far from being uniform (Fig. \ref{fig:ii}-(iii)-A).
-Overall, the BH control with standard and TNA EPVs is conservative (Fig. \ref{fig:ii}-(iii)-B), but it is slightly liberal over the critical range of q-values (0-0.1) (Fig. \ref{fig:ii}-(iii)-C).
+At first glance, the results suggest that LTT and TNA+ manage to control FDR well but this datasets is challenging for BH with standard or TNA- EPVs.
+The Q-Q plot of the EPVs exhibit deviations from uniformity but TNA EPVs are closer to being uniform (Fig. \ref{fig:ii}-(iii)-A).
+Overall, the BH control with standard EPVs is liberal at every alpha level (Fig. \ref{fig:ii}-(iii)-B); while the other methods are slightly liberal over the critical range of q-values (0-0.1) (Fig. \ref{fig:ii}-(iii)-C), and they become conservative beyond.
 BH protocol seems to be more accurate with standard rather than with TNA EPVs.
 The FDR estimation error with BH is significant (Fig. \ref{fig:ii}-(iii)-D). 
 
@@ -740,17 +740,16 @@ The FDR estimation error with BH is significant (Fig. \ref{fig:ii}-(iii)-D).
 
 Next, we further analyzed the results by each class separately.
 We plotted the training and test positive and negative discriminative score distributions class-wise provided by the deep learning model (Fig. \ref{fig:BCSS-classwise} first row).
-The distribution plots show that the test scores are differently distributed from the training scores in all the classes.
+The distribution plots show that the test scores are differently distributed from the training scores in all classes.
 We also plotted the distribution of the adjusted scores of the negative test samples, adjusted by our TNA methods (green and purple lines in Fig. \ref{fig:BCSS-classwise}) in order to see how well they are aligned to the training null distribution.
 In the case of the Stroma class, the mode of adjusted test scores (green and purple lines) move a bit closer to the one of the true training null distribution (X0, filled orange bars).
 However, their tails on the right hand side remain off.
 In the other two classes, the adjusted test scores align visibly better to the training null distribution (X0).
 The corresponding FDR curves are shown in the second row of Fig \ref{fig:BCSS-classwise}.
-Both the TNA- and the TNA+ methods improves the results in the case of the Stroma class.
+Both the TNA- and the TNA+ methods improves the FDR estimation accuracy with all three classes.
 This is mainly due to the fact that the Storey method provides better $\hat{\pi_0}$ estimation using the TNA EPVs than using the standard EPVs.
-In the case of the other two classes, TNA- and TNA+ make minor effects on the FDR control compared to the standard EPV.
 The LTT method is overly liberal with the Stroma class, and it is overly conservative with the Tumor class.
-We suspect that LTT appears to be accurate by chance on the whole dataset because the two types of bias cancel each other out in the Stroma and the Tumor classes.
+We suspect that LTT appears to be accurate on the whole dataset simply by chance because the two types of bias cancel each other out in the Stroma and the Tumor classes.
 These two classes account for the the 94 \% of the whole data.
 
 \edit{In our opinion, the comparatively weaker performance of the TNA method on the BCSS dataset stems from subpopulation shift (proportions of different subclasses change from training to test sets). 
