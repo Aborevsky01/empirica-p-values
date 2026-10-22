@@ -1,0 +1,60 @@
+Manuscript: PONE-D-26-04885R2
+Title: Toward reliable false discovery rate control in classification problems under distribution shift
+
+Dear PLOS ONE Editorial Office,
+
+Thank you for accepting our manuscript for publication in PLOS ONE. We have addressed the final requests as follows.
+
+1. Author list, affiliations, author contributions, competing interests, and financial disclosure
+
+We have checked the author list and affiliations on the title page. We have updated the affiliations of Andrey Borevskiy by adding two further affiliations. HSE University remains his first affiliation. His affiliations are now:
+
+  1. Laboratory on AI for Computational Biology, Faculty of Computer Science, HSE University, 11 Pokrovsky Bvld, Moscow, 109028, Russian Federation
+  2. Applied AI Institute, Bolshoy Boulevard 30, Building 1, Moscow 121205, Russia
+  3. Moscow Center for Advanced Studies, 20 Kulakova Str., Moscow, Russia
+
+The reason for this update: Andrey Borevskiy carried out most of the research presented in this manuscript about two to four years ago, while he was a member of the Laboratory on AI for Computational Biology at HSE University. HSE University therefore remains his primary affiliation. Since then he has joined the Applied AI Institute and the Moscow Center for Advanced Studies, and he carried out his work on the revisions of this manuscript while at these institutions. We have added them so that his affiliations accurately reflect where the work was done.
+
+The affiliation of Attila Kertesz-Farkas is unchanged (HSE University). No authors have been added or removed, and the author order is unchanged.
+
+We confirm that the following statements are correct as listed in your letter and remain unchanged.
+
+Author contributions:
+  Attila Kertesz-Farkas: Conceptualization, Formal analysis, Methodology, Project administration, Supervision, Writing – original draft, Writing – review & editing
+  Andrey Borevskiy: Data curation, Formal analysis, Investigation, Methodology, Validation, Visualization, Writing – original draft, Writing – review & editing
+
+Competing interests: The authors have declared that no competing interests exist.
+
+Financial disclosure: The authors received no specific funding for this work.
+
+2. LaTeX submission files
+
+We have removed all tracked changes from the LaTeX source file, so only the final text remains. We are submitting:
+  - the LaTeX source file as a single file (exact-p-value_v3_clean.tex),
+  - the references as a separate .bib file (bibliography.bib),
+  - the revised manuscript PDF, compiled from the submitted .tex file.
+
+3. Formatting
+
+We have checked the manuscript against the PLOS ONE LaTeX guidelines and the Author Formatting Checklist for references, tables, and figures.
+
+We have also corrected a typographical error in the title of the Fig 7 caption: "Instance of TissueNet dataset" now reads "Instances of TissueNet dataset", because the figure shows four instances.
+
+Following the Author Formatting Checklist, we have also corrected the formatting of several references in the .bib file. No references were added or removed, and the numbering of the references is unchanged. The corrections are:
+  - arXiv identifiers of the cited preprints are now printed in full (e.g., arXiv:2110.01052 instead of arXiv:211001052), and all preprints follow the same format;
+  - incorrect "arXiv" links containing journal PDF URLs were removed from two JAMA references; their DOIs are kept;
+  - page ranges are now printed correctly (e.g., 170-81 instead of "170  181");
+  - the author name "Quiñonero-Candela" is now spelled correctly;
+  - missing publication details were completed: the journal for Al-Antari (Diagnostics. 2023;13(4):688), the report number for Zhang (UCB/EECS-2021-262), the preprint server for Cellpose (bioRxiv), and the full StatPearls citation for Shebl and Paul (In: StatPearls. Treasure Island (FL): StatPearls Publishing; 2023. PMID: 30485002).
+
+Apart from the affiliation update, the caption correction, and the reference formatting corrections described above, we have made no changes to the content of the manuscript.
+
+Thank you again for your help with our manuscript.
+
+Sincerely,
+
+Attila Kertesz-Farkas (corresponding author)
+on behalf of all authors
+Laboratory on AI for Computational Biology, Faculty of Computer Science
+HSE University, Moscow, Russian Federation
+akerteszfarkas@hse.ru
